@@ -1,0 +1,33 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-petai-dev-182911-authRole",
+      "UnauthRoleArn": "arn:aws:iam::526008406724:role/amplify-petai-dev-182911-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::526008406724:role/amplify-petai-dev-182911-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-petai-dev-182911-deployment",
+      "UnauthRoleName": "amplify-petai-dev-182911-unauthRole",
+      "StackName": "amplify-petai-dev-182911",
+      "StackId": "arn:aws:cloudformation:eu-central-1:526008406724:stack/amplify-petai-dev-182911/96b76150-bd39-11ee-99c7-0a359deac2d7",
+      "AmplifyAppId": "d2o62h8q6cm4ek"
+    },
+    "categories": {
+      "auth": {
+        "petaiAuhtentication": {}
+      },
+      "storage": {
+        "petaiStorage": {},
+        "petai": {}
+      },
+      "function": {
+        "petTemplatesList": {
+          "deploymentBucketName": "amplify-petai-dev-182911-deployment",
+          "s3Key": "amplify-builds/petTemplatesList-47764e65394a725a6851-build.zip"
+        }
+      },
+      "api": {
+        "petai": {}
+      }
+    }
+  }
+}

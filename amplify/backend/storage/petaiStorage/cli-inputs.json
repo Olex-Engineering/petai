@@ -1,0 +1,18 @@
+{
+  "resourceName": "petaiStorage",
+  "policyUUID": "84363a16",
+  "bucketName": "metadata",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ",
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ],
+  "authAccess": [
+    "READ",
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

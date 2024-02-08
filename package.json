@@ -6,22 +6,42 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "copy:idl": "cp -r ../../solana-program/target/idl/petai.json ./petai.json && cp -r ../../solana-program/target/types/petai.ts ./src/app/types/petai.ts"
   },
   "dependencies": {
+    "@aws-amplify/adapter-nextjs": "^1.0.13",
+    "@coral-xyz/anchor": "^0.29.0",
+    "@metaplex-foundation/mpl-token-metadata": "^3.1.2",
+    "@metaplex-foundation/umi": "^0.8.10",
+    "@metaplex-foundation/umi-bundle-defaults": "^0.8.10",
+    "@metaplex-foundation/umi-signer-wallet-adapters": "^0.8.10",
+    "@nextui-org/react": "^2.2.9",
+    "@solana/spl-token": "^0.3.10",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.34",
+    "@solana/wallet-adapter-wallets": "^0.19.24",
+    "@solana/web3.js": "^1.87.6",
+    "aws-amplify": "^6.0.15",
+    "framer-motion": "^10.17.6",
+    "next": "14.0.4",
+    "pino-pretty": "^10.3.1",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.0.4"
+    "react-icons-kit": "^2.0.0",
+    "react-toastify": "^10.0.4",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.4"
+    "typescript": "^5"
   }
 }

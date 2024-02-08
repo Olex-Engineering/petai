@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { ADMINS_WALLETS_PUB_KEYS } from '@/app/constants';
+import { ADMINS_WALLETS_PUB_KEYS } from '@/app/utils/constants';
 
 export const useIsAdmin = () => {
   const { wallet } = useWallet();

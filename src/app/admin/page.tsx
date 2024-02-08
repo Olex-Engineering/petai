@@ -1,31 +1,72 @@
 'use client';
 
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useLayoutEffect } from 'react';
-import { ADMINS_WALLETS_PUB_KEYS } from '@/app/constants';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useIsAdmin } from '@/app/hooks/useIsAdmin';
+import { useIsAdmin } from '@/app/shareable/hooks/useIsAdmin';
+import { CircularProgress } from '@nextui-org/react';
+import { ProgramConfiguration } from './components/ProgramConfiguration';
+import { useAnchor } from '../shareable/providers/AnchorContextProvider';
+import { Initialization } from './components/Initialization';
+import { Program } from '@coral-xyz/anchor';
+import { Petai } from '../types/petai';
+import { v4 } from 'uuid';
 
 export default function AdminPage() {
   const isAdmin = useIsAdmin();
   const router = useRouter();
+  const { program } = useAnchor();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isStateInitialized, setIsStateInitialized] = useState(false);
 
   useLayoutEffect(() => {
     if (!isAdmin) {
-      router.back();
+      router.replace('/');
     }
   }, [isAdmin, router]);
 
-  if (!isAdmin) {
-    return <main className={'min-h-screen'}>
-      Loading...
-    </main>;
+  useEffect(() => {
+    isProgramInitialized(program);
+  }, [program]);
+
+  const isProgramInitialized = async (program: Program<Petai> | null) => {
+    if (!program) {
+      return;
+    }
+
+    const state = await program.account.programState.all();
+
+    if (state.length) {
+      setIsStateInitialized(true);
+    }
+
+    setIsLoading(false);
+  };
+
+  const programInitedCb = () => {
+    setIsStateInitialized(true);
+  };
+
+  if (isLoading || !isAdmin) {
+    return (
+      <div className="max-w-screen-lg m-auto py-5">
+        <CircularProgress size="lg" aria-label="Loading..." />
+      </div>
+    );
+  }
+
+  if (!isStateInitialized) {
+    return (
+      <div className="max-w-screen-lg m-auto py-5">
+        <Initialization initedCb={programInitedCb} />
+      </div>
+    );
   }
 
   return (
-    <main className={'min-h-screen'}>
-      <h1>Create Collection</h1>
-      <h1>Create NFT</h1>
-    </main>
-  )
+    <div className="max-w-screen-lg m-auto py-5">
+      <div className="py-4 mb-4">
+        <ProgramConfiguration />
+      </div>
+    </div>
+  );
 }
