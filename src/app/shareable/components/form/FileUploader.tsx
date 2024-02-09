@@ -1,7 +1,5 @@
 import { BUCKET_IMAGES_NAME, BUCKET_URL } from "@/app/utils/constants";
-import { set } from "@metaplex-foundation/umi/serializers";
 import { Button, Input } from "@nextui-org/react";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { uploadData } from "aws-amplify/storage";
 import { FC, useEffect, useState } from "react";
 
@@ -12,12 +10,14 @@ export const FileUploader: FC<{
     isDisabled?: boolean,
     isRequired?: boolean
     uri?: string
+    bucketName?: string
 }> = ({
     onUriChange,
     accept = 'image/*',
     className = '',
     isDisabled = false,
     isRequired = false,
+    bucketName = BUCKET_IMAGES_NAME,
     uri
 }) => {
     const [file, setFile] = useState<File>();
@@ -33,6 +33,7 @@ export const FileUploader: FC<{
 
     const onFileChange = (file?: File): void => {
         setFile(file);
+        setFileUri('');
         setFileName(file?.name || '')
     }
 
@@ -49,7 +50,7 @@ export const FileUploader: FC<{
         const arrayBufferFile = await file.arrayBuffer();
 
         const result = await uploadData({
-            key: `${BUCKET_IMAGES_NAME}/${file.name}`,
+            key: `${bucketName}/${file.name}`,
             data: arrayBufferFile
         }).result;
 

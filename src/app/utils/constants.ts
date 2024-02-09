@@ -20,7 +20,9 @@ export const MPL_TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28
 // AWS
 export const BUCKET_URL = 'https://metadata182911-dev.s3.eu-central-1.amazonaws.com/public/';
 export const BUCKET_IMAGES_NAME = 'images';
+export const BUCKET_PET_TEMPLATES_NAME = 'pet-templates';
 export const BUCKET_COLLECTION_METADATA_NAME = 'collection_metadata';
+export const PET_TEMPLATES_API = 'https://ppka958fzj.execute-api.eu-central-1.amazonaws.com/dev/pet-templates';
 
 // CLIENT
 export const DEFAULT_METADATA_SYMBOL = 'PETAI';

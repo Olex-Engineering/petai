@@ -76,7 +76,6 @@ export const CreateMetadataForm: FC<CreateMetadataFormProps> = ({ defaultValue, 
     }, [name, imageUrl, description, symbol, attributes, animationUrl, externalUrl, files, propertiesCategory, onChange]);
 
     useEffect(() => {
-        console.log(defaultValue?.attributes);
         if (defaultValue) {
             setName(defaultValue.name || name);
             setDescription(defaultValue.description || description);
