@@ -28,7 +28,6 @@ export const ItemListWithCreate = <T,>({ itemName, renderListItemFn, fetchItemsF
     const getItems = async () => {
         setIsLoading(true);
         const items = await fetchItemsFn();
-        console.log(items);
         setItemList(items);
         setIsLoading(false);
     }
@@ -43,7 +42,7 @@ export const ItemListWithCreate = <T,>({ itemName, renderListItemFn, fetchItemsF
             <div className='flex justify-between items-center mb-6'>
                 <h1 className='text-2xl'>{ itemName } list</h1>
                 <div className='flex items-center'>
-                    <Button onClick={() => fetchItemsFn()} size="sm" isIconOnly={true} variant="bordered" className="mr-2">
+                    <Button onClick={getItems} size="sm" isIconOnly={true} variant="bordered" className="mr-2">
                         <Icon size={14}  icon={ic_autorenew} />
                     </Button>
                     <Button

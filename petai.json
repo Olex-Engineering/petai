@@ -462,6 +462,44 @@
           "type": "u8"
         }
       ]
+    },
+    {
+      "name": "putDecor",
+      "accounts": [
+        {
+          "name": "decorState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "decorArgs",
+          "type": {
+            "defined": "DecorArgs"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -485,6 +523,28 @@
           {
             "name": "increaseLove",
             "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DecorState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": "publicKey"
+          },
+          {
+            "name": "globalType",
+            "type": {
+              "defined": "DecorType"
+            }
           },
           {
             "name": "bump",
@@ -561,9 +621,7 @@
           {
             "name": "decors",
             "type": {
-              "vec": {
-                "defined": "Decor"
-              }
+              "vec": "publicKey"
             }
           },
           {
@@ -641,6 +699,24 @@
           {
             "name": "increaseLove",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DecorArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "globalType",
+            "type": {
+              "defined": "DecorType"
+            }
           }
         ]
       }
@@ -752,6 +828,18 @@
       }
     },
     {
+      "name": "RealDogConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
       "name": "GameEffect",
       "type": {
         "kind": "struct",
@@ -774,39 +862,24 @@
       }
     },
     {
-      "name": "Decor",
+      "name": "DecorType",
       "type": {
-        "kind": "struct",
-        "fields": [
+        "kind": "enum",
+        "variants": [
           {
-            "name": "decorType",
-            "type": {
-              "defined": "DecorType"
-            }
+            "name": "Background"
           },
           {
-            "name": "nft",
-            "type": "publicKey"
+            "name": "OnTheWall"
           },
           {
-            "name": "bonus",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "RealDogConfig",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "wallet",
-            "type": "publicKey"
+            "name": "Table"
           },
           {
-            "name": "uri",
-            "type": "string"
+            "name": "Floor"
+          },
+          {
+            "name": "Bowl"
           }
         ]
       }
@@ -933,17 +1006,6 @@
           },
           {
             "name": "Food"
-          }
-        ]
-      }
-    },
-    {
-      "name": "DecorType",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "SomeType"
           }
         ]
       }

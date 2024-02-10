@@ -1,5 +1,5 @@
 import { web3 } from "@coral-xyz/anchor";
-import { PROGRAM_STATE_SEED, PROGRAM_ID, TOKEN_MINT_SEED, PET_COLLECTION_MINT_SEED, MPL_TOKEN_METADATA_PROGRAM_ID, ASSET_COLLECTION_MINT_SEED, ASSET_TEST_MINT_SEED, ASSET_STATE_SEED, PLAYER_STATE_SEED, PET_NFT_MINT_SEED, ADMIN_KEY, DECOR_COLLECTION_MINT_SEED } from "./constants";
+import { PROGRAM_STATE_SEED, PROGRAM_ID, TOKEN_MINT_SEED, PET_COLLECTION_MINT_SEED, MPL_TOKEN_METADATA_PROGRAM_ID, ASSET_COLLECTION_MINT_SEED, ASSET_TEST_MINT_SEED, ASSET_STATE_SEED, PLAYER_STATE_SEED, PET_NFT_MINT_SEED, ADMIN_KEY, DECOR_COLLECTION_MINT_SEED, DECOR_STATE_SEED } from "./constants";
 
 
 export const [PROGRAM_STATE_PDA, PROGRAM_STATE_PDA_BUMP] = web3.PublicKey.findProgramAddressSync(
@@ -109,6 +109,13 @@ export const getTokenMetadataPda = (seed: string): [web3.PublicKey, number] => {
 export const getAssetStatePda = (tokenMint: web3.PublicKey): [web3.PublicKey, number] => {
   return web3.PublicKey.findProgramAddressSync(
     [Buffer.from(ASSET_STATE_SEED), tokenMint.toBuffer()],
+    PROGRAM_ID
+  )
+}
+
+export const getDecorStatePda = (tokenMint: web3.PublicKey): [web3.PublicKey, number] => {
+  return web3.PublicKey.findProgramAddressSync(
+    [Buffer.from(DECOR_STATE_SEED), tokenMint.toBuffer()],
     PROGRAM_ID
   )
 }

@@ -22,6 +22,12 @@ export interface MetadataAttribute {
     value: string;
     isCanBeDeleted?: boolean;
     isNameCanBeChanged?: boolean;
+    options?: MetadataAttributeOption[];
+}
+
+export interface MetadataAttributeOption {
+    name: string;
+    value: string;
 }
 
 export interface MetadataProperties {
@@ -199,15 +205,34 @@ export const CreateMetadataForm: FC<CreateMetadataFormProps> = ({ defaultValue, 
                     isReadOnly={!attribute.isNameCanBeChanged}
                 >
                 </Input>
-                <Input
-                    isRequired={true}
-                    variant={'bordered'}
-                    label={'Value'}
-                    value={attribute.value}
-                    onValueChange={(value) => setAttributeProperty(index, 'value', value)}
-                    className={'mr-2'}
-                >
-                </Input>
+
+                {attribute.options ?
+                    <Select
+                        isRequired={true}
+                        variant={'bordered'}
+                        label={'Value'}
+                        value={attribute.value}
+                        selectedKeys={[attribute.value]}
+                        className={'mr-2'}
+                        onChange={({ target }) => setAttributeProperty(index, 'value', target.value)}
+                    >
+                        {attribute.options.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>{option.name}</SelectItem>
+                        ))}
+                    </Select>
+                 :
+                
+                    <Input
+                        isRequired={true}
+                        variant={'bordered'}
+                        label={'Value'}
+                        value={attribute.value}
+                        onValueChange={(value) => setAttributeProperty(index, 'value', value)}
+                        className={'mr-2'}
+                    >
+                    </Input>
+                }
+                
                 <Button 
                     onClick={() => removeAttribute(index)}
                     variant={'bordered'}

@@ -11,7 +11,7 @@ import { MPL_TOKEN_METADATA_PROGRAM_ID, PrintSupply } from "@metaplex-foundation
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { ADMIN_KEY } from "@/app/utils/constants";
 import { toast } from "react-toastify";
-import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { ComputeBudgetInstruction, ComputeBudgetProgram, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PROGRAM_STATE_PDA, getTokenMetadataPda, getTokenMintPda } from "@/app/utils/pda-constants";
 
@@ -58,7 +58,6 @@ export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaul
             return;
         }
 
-        const transaction = new Transaction();
         const metadataUri = await uploadMetadataToAws(metadataFormValue);
         const tokenMintPda = getTokenMintPda(metadataFormValue.name)[0];
         const tokenMetadataPda = getTokenMetadataPda(metadataFormValue.name)[0];
@@ -67,9 +66,10 @@ export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaul
             ADMIN_KEY
           )
 
+        const additionalInstructions = await getAdditionalInstructions?.(metadataFormValue);
 
         // Create token
-        const createTokenInstruction = await program.methods.createToken(
+        const tx = await program.methods.createToken(
             metadataFormValue.name,
             new BN(numberTokenToMint),
             getTokenOptions({
@@ -92,15 +92,11 @@ export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaul
             collectionMint: collectionProps?.mintPda,
             collectionMetadata: collectionProps?.metadataPda || null,
             collectionMasterEdition: collectionProps?.masterEditionPda || null
-        }).instruction();
-
-        transaction.add(createTokenInstruction);
-        const additionalInstructions = await getAdditionalInstructions?.(metadataFormValue);
-        additionalInstructions?.forEach((instruction) => {
-            transaction.add(instruction);
         })
+        .preInstructions([ComputeBudgetProgram.setComputeUnitLimit({ units: 500_000 })])
+        .postInstructions(additionalInstructions || [])
+        .rpc();
 
-        const tx = await wallet?.adapter.sendTransaction(transaction, connection);
         console.log(tx);
     };
 
