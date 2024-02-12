@@ -44,10 +44,11 @@ export interface MetadataFile {
 
 interface CreateMetadataFormProps {
     onChange: (formValue: MetadataFormValue) => void;
+    isNameReadOnly?: boolean;
     defaultValue?: Partial<MetadataFormValue>;
 }
 
-export const CreateMetadataForm: FC<CreateMetadataFormProps> = ({ defaultValue, onChange }) => {
+export const CreateMetadataForm: FC<CreateMetadataFormProps> = ({ defaultValue, onChange, isNameReadOnly = false }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [externalUrl, setExternalUrl] = useState(window.location.origin);
@@ -57,7 +58,6 @@ export const CreateMetadataForm: FC<CreateMetadataFormProps> = ({ defaultValue, 
     const [animationUrl, setAnimationUrl] = useState('');
     const [files, setFiles] = useState<MetadataFile[]>([]);
     const [attributes, setAttributes] = useState<MetadataAttribute[]>([]);
-
 
     useEffect(() => {
         onChange({
@@ -154,6 +154,7 @@ export const CreateMetadataForm: FC<CreateMetadataFormProps> = ({ defaultValue, 
           <div className="flex py-2">
             <Input
               isRequired={true}
+              isReadOnly={isNameReadOnly}
               variant={'bordered'}
               label={'Name'}
               onValueChange={setName}

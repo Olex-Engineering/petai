@@ -2,7 +2,7 @@
 
 import { FC, FormEventHandler, useEffect, useState } from "react";
 import { CreateMetadataForm, MetadataFormValue } from "../../shareable/CreateMetadataForm";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button, Input, Spinner } from "@nextui-org/react";
 import { uploadMetadataToAws } from "@/app/utils/s3-utils";
 import { useAnchor } from "@/app/shareable/providers/AnchorContextProvider";
 import { getTokenOptions } from "@/app/utils/token-utils";
@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PROGRAM_STATE_PDA, getTokenMetadataPda, getTokenMintPda } from "@/app/utils/pda-constants";
+import { BN } from "@coral-xyz/anchor";
 
 export interface UpdateTokenProps {
     onCreated: () => void;
@@ -31,6 +32,7 @@ export interface UpdateTokenCollectionProps {
 export const UpdateToken: FC<UpdateTokenProps> = ({onCreated, defaultMetadataValuesProp, customValidation, getAdditionalInstructions}) => {
     const [metadataFormValue, setMetadataFomValue] = useState<MetadataFormValue>();
     const [defaultMetadataValues, setDefaultMetadataValues] = useState<Partial<MetadataFormValue>>();
+    const [mintAmount, setMintAmount] = useState<number>(1);
     const [isLoading, setIsLoading] = useState(false);
     const { program } = useAnchor();
     const { wallet } = useWallet();
@@ -65,6 +67,7 @@ export const UpdateToken: FC<UpdateTokenProps> = ({onCreated, defaultMetadataVal
                 uri: metadataUri,
                 symbol: metadataFormValue.symbol,
                 collectionMint: null,
+                // Not updated on BE side
                 tokenType: {
                     fungibleAsset: {}
                 },
@@ -106,23 +109,71 @@ export const UpdateToken: FC<UpdateTokenProps> = ({onCreated, defaultMetadataVal
             toast.error('Opps! Something went wrong. Please try again.');
         }
     }
+    
+
+    const handleTokenMint: FormEventHandler = async (event) => {
+        setIsLoading(true);
+        event.preventDefault();
+
+        const tokenMint = getTokenMintPda(metadataFormValue?.name || defaultMetadataValues?.name || '')[0];
+        const tokenAccount = getAssociatedTokenAddressSync(
+            tokenMint,
+            ADMIN_KEY
+          )
+
+        try {
+            await program?.methods.mintToken(new BN(mintAmount)).accounts({
+                state: PROGRAM_STATE_PDA,
+                mint: tokenMint,
+                ataAccount: tokenAccount
+            }).rpc();
+
+            toast.success(`Minted to your account ${mintAmount} tokens!`);
+            setIsLoading(false);
+        } catch (error) {
+            console.error(error);
+            toast.error('Ops; Something went wrong...');
+            setIsLoading(false);
+        }
+
+    }
 
     return (
-        <form action='#' className='pb-5' onSubmit={formSubmitHandler}>
-            <CreateMetadataForm
-                onChange={setMetadataFomValue}
-                defaultValue={defaultMetadataValues}>
-            </CreateMetadataForm>
-            <div className='mt-6 flex items-center justify-end'>
-                {isLoading 
-                    ?  <Spinner></Spinner>
-                    : <>
-                        <Button type='submit' variant='solid' color='primary' className='mr-2'>
-                            Update
-                        </Button>
-                    </>
-                }
+        <div>
+            <div className='mb-8 mt-4'>
+                <h2 className='mb-2'>Mint Token: </h2>
+                <form action="#" onSubmit={handleTokenMint}>
+                    <Input
+                        isRequired={true}
+                        label='Amount'
+                        value={mintAmount.toString()}
+                        onValueChange={(val) => setMintAmount(+val)}
+                        variant='bordered'
+                        >
+                    </Input>
+                    <Button type='submit' variant='solid' color='primary' className='mt-4'>
+                        Mint
+                    </Button>
+                </form>
             </div>
-        </form>
+            <form action='#' className='pb-5' onSubmit={formSubmitHandler}>
+                <CreateMetadataForm
+                    onChange={setMetadataFomValue}
+                    isNameReadOnly={true}
+                    defaultValue={defaultMetadataValues}>
+                </CreateMetadataForm>
+                <div className='mt-6 flex items-center justify-end'>
+                    {isLoading 
+                        ?  <Spinner></Spinner>
+                        : <>
+                            <Button type='submit' variant='solid' color='primary' className='mr-2'>
+                                Update
+                            </Button>
+                        </>
+                    }
+                </div>
+            </form>
+        </div>
+        
     );
 };

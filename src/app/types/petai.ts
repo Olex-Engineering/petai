@@ -221,6 +221,52 @@ export type Petai = {
       ]
     },
     {
+      "name": "mintToken",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ataAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "initializer",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "initPlayerState",
       "accounts": [
         {
@@ -525,6 +571,10 @@ export type Petai = {
             "type": "u8"
           },
           {
+            "name": "price",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
           }
@@ -629,7 +679,7 @@ export type Petai = {
             "type": "i64"
           },
           {
-            "name": "lastFreeCollectionMint",
+            "name": "lastFreeAssetsCollected",
             "type": "i64"
           },
           {
@@ -662,6 +712,10 @@ export type Petai = {
           },
           {
             "name": "decorCollection",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
             "type": "publicKey"
           },
           {
@@ -699,6 +753,10 @@ export type Petai = {
           {
             "name": "increaseLove",
             "type": "u8"
+          },
+          {
+            "name": "price",
+            "type": "u64"
           }
         ]
       }
@@ -717,6 +775,28 @@ export type Petai = {
             "type": {
               "defined": "DecorType"
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameEffect",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "effectType",
+            "type": {
+              "defined": "GameEffectType"
+            }
+          },
+          {
+            "name": "effectPower",
+            "type": "u8"
+          },
+          {
+            "name": "end",
+            "type": "i64"
           }
         ]
       }
@@ -840,28 +920,6 @@ export type Petai = {
       }
     },
     {
-      "name": "GameEffect",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "effectType",
-            "type": {
-              "defined": "GameEffectType"
-            }
-          },
-          {
-            "name": "effectPower",
-            "type": "u8"
-          },
-          {
-            "name": "end",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
       "name": "DecorType",
       "type": {
         "kind": "enum",
@@ -880,6 +938,23 @@ export type Petai = {
           },
           {
             "name": "Bowl"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameEffectType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Game"
+          },
+          {
+            "name": "Walk"
+          },
+          {
+            "name": "Food"
           }
         ]
       }
@@ -986,26 +1061,6 @@ export type Petai = {
           },
           {
             "name": "Dead"
-          }
-        ]
-      }
-    },
-    {
-      "name": "GameEffectType",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "Love"
-          },
-          {
-            "name": "Game"
-          },
-          {
-            "name": "Walk"
-          },
-          {
-            "name": "Food"
           }
         ]
       }
@@ -1253,6 +1308,52 @@ export const IDL: Petai = {
       ]
     },
     {
+      "name": "mintToken",
+      "accounts": [
+        {
+          "name": "state",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "ataAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "initializer",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "initPlayerState",
       "accounts": [
         {
@@ -1557,6 +1658,10 @@ export const IDL: Petai = {
             "type": "u8"
           },
           {
+            "name": "price",
+            "type": "u64"
+          },
+          {
             "name": "bump",
             "type": "u8"
           }
@@ -1661,7 +1766,7 @@ export const IDL: Petai = {
             "type": "i64"
           },
           {
-            "name": "lastFreeCollectionMint",
+            "name": "lastFreeAssetsCollected",
             "type": "i64"
           },
           {
@@ -1694,6 +1799,10 @@ export const IDL: Petai = {
           },
           {
             "name": "decorCollection",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
             "type": "publicKey"
           },
           {
@@ -1731,6 +1840,10 @@ export const IDL: Petai = {
           {
             "name": "increaseLove",
             "type": "u8"
+          },
+          {
+            "name": "price",
+            "type": "u64"
           }
         ]
       }
@@ -1749,6 +1862,28 @@ export const IDL: Petai = {
             "type": {
               "defined": "DecorType"
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameEffect",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "effectType",
+            "type": {
+              "defined": "GameEffectType"
+            }
+          },
+          {
+            "name": "effectPower",
+            "type": "u8"
+          },
+          {
+            "name": "end",
+            "type": "i64"
           }
         ]
       }
@@ -1872,28 +2007,6 @@ export const IDL: Petai = {
       }
     },
     {
-      "name": "GameEffect",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "effectType",
-            "type": {
-              "defined": "GameEffectType"
-            }
-          },
-          {
-            "name": "effectPower",
-            "type": "u8"
-          },
-          {
-            "name": "end",
-            "type": "i64"
-          }
-        ]
-      }
-    },
-    {
       "name": "DecorType",
       "type": {
         "kind": "enum",
@@ -1912,6 +2025,23 @@ export const IDL: Petai = {
           },
           {
             "name": "Bowl"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GameEffectType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Game"
+          },
+          {
+            "name": "Walk"
+          },
+          {
+            "name": "Food"
           }
         ]
       }
@@ -2018,26 +2148,6 @@ export const IDL: Petai = {
           },
           {
             "name": "Dead"
-          }
-        ]
-      }
-    },
-    {
-      "name": "GameEffectType",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "Love"
-          },
-          {
-            "name": "Game"
-          },
-          {
-            "name": "Walk"
-          },
-          {
-            "name": "Food"
           }
         ]
       }

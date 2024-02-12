@@ -24,6 +24,8 @@ export const BUCKET_IMAGES_NAME = 'images';
 export const BUCKET_PET_TEMPLATES_NAME = 'pet-templates';
 export const BUCKET_COLLECTION_METADATA_NAME = 'collection_metadata';
 export const PET_TEMPLATES_API = 'https://ppka958fzj.execute-api.eu-central-1.amazonaws.com/dev/pet-templates';
+export const REAL_PETS_API = 'https://ppka958fzj.execute-api.eu-central-1.amazonaws.com/dev/real-pets';
 
 // CLIENT
 export const DEFAULT_METADATA_SYMBOL = 'PETAI';
+export const DEFAULT_TOKEN_NAME = 'PETAI';

@@ -7,6 +7,7 @@ import { TransactionInstruction } from "@solana/web3.js";
 import { UpdateToken } from "../../shareable/tokens/UpdateToken";
 import { getTokenMintPda, getAssetStatePda, PROGRAM_STATE_PDA } from "@/app/utils/pda-constants";
 import { MetadataFormValue } from "../../shareable/CreateMetadataForm";
+import { BN } from "@coral-xyz/anchor";
 
 export interface UpdateAssetProps {
     onUpdated?: () => void;
@@ -16,6 +17,7 @@ export interface UpdateAssetProps {
 const INCREASE_FOOD_ATTR_NAME = 'Increase food';
 const INCREASE_LONELINESS_ATTR_NAME = 'Increase loneliness';
 const INCREASE_LOVE_ATTR_NAME = 'Increase love';
+const PRICE_ATTR_NAME = 'Price';
 
 export const UpdateAsset: FC<UpdateAssetProps> = ({defaultMetadata, onUpdated}) => {
     const [defaultMetadataValues, setDefaultMetadataValues] = useState<Partial<MetadataFormValue>>();
@@ -29,8 +31,9 @@ export const UpdateAsset: FC<UpdateAssetProps> = ({defaultMetadata, onUpdated}) 
         const increaseFood = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_FOOD_ATTR_NAME)!.value;
         const increaseLoneliness = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LONELINESS_ATTR_NAME)!.value;
         const increaseLove = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LOVE_ATTR_NAME)!.value;
+        const price = new BN(metadataFormValue.attributes.find((attr) => attr.trait_type === PRICE_ATTR_NAME)!.value);
 
-        if (isNaN(increaseFood) || isNaN(increaseLoneliness) || isNaN(increaseLove)) {
+        if (isNaN(increaseFood) || isNaN(increaseLoneliness) || isNaN(increaseLove) || isNaN(price)) {
             toast.error('Invalid attributes values. (Only numbers are allowed)');
             return false;
         }
@@ -42,6 +45,7 @@ export const UpdateAsset: FC<UpdateAssetProps> = ({defaultMetadata, onUpdated}) 
         const increaseFood = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_FOOD_ATTR_NAME)!.value;
         const increaseLoneliness = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LONELINESS_ATTR_NAME)!.value;
         const increaseLove = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LOVE_ATTR_NAME)!.value;
+        const price = +metadataFormValue.attributes.find((attr) => attr.trait_type === PRICE_ATTR_NAME)!.value;
 
 
         if (!program) {
@@ -53,7 +57,8 @@ export const UpdateAsset: FC<UpdateAssetProps> = ({defaultMetadata, onUpdated}) 
             assetMint: assetMintPda,
             increaseFood,
             increaseLoneliness,
-            increaseLove
+            increaseLove,
+            price
         }).accounts({
             assetState: getAssetStatePda(assetMintPda)[0],
             state: PROGRAM_STATE_PDA,

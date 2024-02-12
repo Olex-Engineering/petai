@@ -12,12 +12,14 @@ import { PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js";
 import { remove } from "aws-amplify/storage";
 import { FC, FormEventHandler, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { MetadataFormValue, CreateMetadataForm } from "../CreateMetadataForm";
+import { MetadataFormValue, CreateMetadataForm } from "../shareable/CreateMetadataForm";
 import { uploadMetadataToAws } from "@/app/utils/s3-utils";
 import { getNftCollectionOptions } from "@/app/utils/nft-utils";
+import { getProgramState } from "@/app/utils/get-program-state";
 
 export interface PutCollectionProps {
-    metadataOptions: CollectionOptionsProps,
+    metadataOptions: CollectionOptionsProps;
+    targetCollection: 'petCollection' | 'decorCollection' | 'assetCollection';
 }
 
 export interface CollectionOptionsProps {
@@ -27,7 +29,7 @@ export interface CollectionOptionsProps {
     masterEditionPda: PublicKey;
 }
 
-export const PutCollection: FC<PutCollectionProps> = ({ metadataOptions }) => {
+export const PutCollection: FC<PutCollectionProps> = ({ metadataOptions, targetCollection }) => {
     const { program, provider } = useAnchor();
     const { connection } = useConnection();
     const [formValue, setFormValue] = useState<MetadataFormValue>();
@@ -59,7 +61,7 @@ export const PutCollection: FC<PutCollectionProps> = ({ metadataOptions }) => {
             setDefaultMetadata(awsData);
             setDefaultMetadataUri(data.uri);
         } catch (error) {
-            console.error('Error fetching metadata:', error);
+            console.log('Metadata not exist');
         } finally {
             setIsLoading(false);
         }
@@ -91,6 +93,8 @@ export const PutCollection: FC<PutCollectionProps> = ({ metadataOptions }) => {
     }
 
     const create = async (metadataValue: MetadataFormValue, metadataUri: string, tokenAccount: PublicKey) => {
+        const updateStateInstruction = await getUpdateProgramStateInstructions();
+
         return await program?.methods.createToken(
             metadataOptions.mintSeed,
             new BN(1),
@@ -110,8 +114,25 @@ export const PutCollection: FC<PutCollectionProps> = ({ metadataOptions }) => {
             collectionMint: null,
             collectionMetadata: null,
             collectionMasterEdition: null
-        }).rpc();
+        })
+        .postInstructions([
+            updateStateInstruction
+        ])
+        .rpc();
     }
+
+    const getUpdateProgramStateInstructions = async () => {
+        const state = await getProgramState(program);
+
+        const newState = {
+            ...state,
+            [targetCollection]: metadataOptions.mintPda
+        }
+
+        return await program!.methods.updateProgramState(newState).accounts({
+            state: PROGRAM_STATE_PDA
+        }).instruction();
+    };
 
     const handleSubmit: FormEventHandler = async (event) => {
         event.preventDefault();
@@ -136,7 +157,8 @@ export const PutCollection: FC<PutCollectionProps> = ({ metadataOptions }) => {
             }
 
             console.log('Transaction: ', tx);
-        } catch {
+        } catch (error) {
+            console.error(error);
             toast.error('Oopps... Something went wrong');
         }
         

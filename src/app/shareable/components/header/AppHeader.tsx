@@ -32,7 +32,11 @@ export const AppHeader: FC = () => {
     {
       title: 'Pets templates',
       href: '/admin/pets-templates',
-    }
+    },
+    {
+      title: 'Real pets',
+      href: '/admin/real-pets',
+    },
   ];
 
   return (

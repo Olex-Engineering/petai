@@ -7,11 +7,11 @@ import { uploadMetadataToAws } from "@/app/utils/s3-utils";
 import { useAnchor } from "@/app/shareable/providers/AnchorContextProvider";
 import { BN } from "@coral-xyz/anchor";
 import { TokenType, getTokenOptions } from "@/app/utils/token-utils";
-import { MPL_TOKEN_METADATA_PROGRAM_ID, PrintSupply } from "@metaplex-foundation/mpl-token-metadata";
+import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { ADMIN_KEY } from "@/app/utils/constants";
 import { toast } from "react-toastify";
-import { ComputeBudgetInstruction, ComputeBudgetProgram, PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { ComputeBudgetProgram, PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PROGRAM_STATE_PDA, getTokenMetadataPda, getTokenMintPda } from "@/app/utils/pda-constants";
 
@@ -24,6 +24,8 @@ export interface CreateTokenProps {
     tokenProps?: CreateTokenOptionsProps;
     collectionProps?: CreateTokenCollectionProps;
     showNumberTokenToMint?: boolean;
+    isCancelShow?: boolean;
+    isNameReadOnly?: boolean;
 }
 
 export interface CreateTokenCollectionProps {
@@ -36,7 +38,7 @@ export interface CreateTokenOptionsProps {
     tokenType: TokenType;
 }
 
-export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaultMetadataValuesProp, customValidation, getAdditionalInstructions, collectionProps, tokenProps, showNumberTokenToMint = true}) => {
+export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaultMetadataValuesProp, customValidation, getAdditionalInstructions, collectionProps, tokenProps, showNumberTokenToMint = true, isCancelShow = true, isNameReadOnly = false}) => {
     const [metadataFormValue, setMetadataFomValue] = useState<MetadataFormValue>();
     const [defaultMetadataValues, setDefaultMetadataValues] = useState<Partial<MetadataFormValue>>();
     const [numberTokenToMint, setNumberTokenToMint] = useState<number>(showNumberTokenToMint ? 10000000 : 1);
@@ -82,22 +84,20 @@ export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaul
                 },
                 creator: PROGRAM_STATE_PDA
             })
-        ).accounts({
-            state: PROGRAM_STATE_PDA,
-            mint: tokenMintPda,
-            metadataAccount: tokenMetadataPda,
-            masterEdition: null,
-            metadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
-            ataAccount: tokenAccount,
-            collectionMint: collectionProps?.mintPda,
-            collectionMetadata: collectionProps?.metadataPda || null,
-            collectionMasterEdition: collectionProps?.masterEditionPda || null
-        })
-        .preInstructions([ComputeBudgetProgram.setComputeUnitLimit({ units: 500_000 })])
-        .postInstructions(additionalInstructions || [])
-        .rpc();
-
-        console.log(tx);
+            ).accounts({
+                state: PROGRAM_STATE_PDA,
+                mint: tokenMintPda,
+                metadataAccount: tokenMetadataPda,
+                masterEdition: null,
+                metadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
+                ataAccount: tokenAccount,
+                collectionMint: collectionProps?.mintPda || null,
+                collectionMetadata: collectionProps?.metadataPda || null,
+                collectionMasterEdition: collectionProps?.masterEditionPda || null
+            })
+            .preInstructions([ComputeBudgetProgram.setComputeUnitLimit({ units: 500_000 })])
+            .postInstructions(additionalInstructions || [])
+            .rpc();
     };
 
     const formSubmitHandler: FormEventHandler = async(event) => {
@@ -135,7 +135,8 @@ export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaul
             </div>
             <CreateMetadataForm
                 onChange={setMetadataFomValue}
-                defaultValue={defaultMetadataValues}>
+                defaultValue={defaultMetadataValues}
+                isNameReadOnly={isNameReadOnly}>
             </CreateMetadataForm>
             <div className='mt-6 flex items-center justify-end'>
                 {isLoading 
@@ -144,9 +145,11 @@ export const CreateToken: FC<CreateTokenProps> = ({onCanceled, onCreated, defaul
                         <Button type='submit' variant='solid' color='primary' className='mr-2'>
                             Submit
                         </Button>
-                        <Button onClick={onCanceled} variant='bordered' color='default' className='mr-2'>
-                            Cancel
-                        </Button>
+                        { isCancelShow && 
+                            <Button onClick={onCanceled} variant='bordered' color='default' className='mr-2'>
+                                Cancel
+                            </Button>
+                        }
                     </>
                 }
             </div>

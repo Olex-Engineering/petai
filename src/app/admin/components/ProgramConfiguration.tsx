@@ -2,9 +2,11 @@
 
 import { FC } from "react";
 import { Tab, Tabs } from "@nextui-org/react";
-import { PutCollection } from "../shareable/collections/PutCollection";
+import { PutCollection } from "./PutCollection";
 import { ASSET_COLLECTION_MASTER_EDITION_PDA, ASSET_COLLECTION_METADATA_PDA, ASSET_COLLECTION_MINT_PDA, DECOR_COLLECTION_MASTER_PDA, DECOR_COLLECTION_METADATA_PDA, DECOR_COLLECTION_MINT_PDA, PET_COLLECTION_MASTER_PDA, PET_COLLECTION_METADATA_PDA, PET_COLLECTION_MINT_PDA } from "@/app/utils/pda-constants";
 import { ASSET_COLLECTION_MINT_SEED, DECOR_COLLECTION_MINT_SEED, PET_COLLECTION_MINT_SEED } from "@/app/utils/constants";
+import { CreateToken } from "../shareable/tokens/CreateToken";
+import { PutToken } from "./PutToken";
 
 
 export const ProgramConfiguration: FC = ()  => {
@@ -14,6 +16,7 @@ export const ProgramConfiguration: FC = ()  => {
             <Tabs variant={'solid'} radius={'md'} title="Program configuration">
                 <Tab title="Pet collection configuration">
                     <PutCollection
+                        targetCollection='petCollection'
                         metadataOptions={{
                             mintPda: PET_COLLECTION_MINT_PDA,
                             metadataPda: PET_COLLECTION_METADATA_PDA,
@@ -24,6 +27,7 @@ export const ProgramConfiguration: FC = ()  => {
                 </Tab>
                 <Tab title="Decor collection configuration">
                     <PutCollection
+                        targetCollection='decorCollection'
                         metadataOptions={{
                             mintPda: DECOR_COLLECTION_MINT_PDA,
                             metadataPda: DECOR_COLLECTION_METADATA_PDA,
@@ -33,7 +37,8 @@ export const ProgramConfiguration: FC = ()  => {
                     ></PutCollection>
                 </Tab>
                 <Tab title="Asset collection configuration">
-                <PutCollection
+                    <PutCollection
+                        targetCollection='assetCollection'
                         metadataOptions={{
                             mintPda: ASSET_COLLECTION_MINT_PDA,
                             metadataPda: ASSET_COLLECTION_METADATA_PDA,
@@ -43,7 +48,8 @@ export const ProgramConfiguration: FC = ()  => {
                     ></PutCollection>
                 </Tab>
                 <Tab title="Token configuration">
-                    <div>Coming soon</div>
+                    <PutToken>
+                    </PutToken>
                 </Tab>
             </Tabs>
         </div>

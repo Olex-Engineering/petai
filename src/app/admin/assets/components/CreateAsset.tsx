@@ -8,6 +8,7 @@ import { ASSET_COLLECTION_MASTER_EDITION_PDA, ASSET_COLLECTION_METADATA_PDA, ASS
 import { toast } from "react-toastify";
 import { TransactionInstruction } from "@solana/web3.js";
 import { CreateToken } from "../../shareable/tokens/CreateToken";
+import { BN } from "@coral-xyz/anchor";
 
 export interface CreateAssetProps {
     onCreated: () => void;
@@ -17,35 +18,21 @@ export interface CreateAssetProps {
 const INCREASE_FOOD_ATTR_NAME = 'Increase food';
 const INCREASE_LONELINESS_ATTR_NAME = 'Increase loneliness';
 const INCREASE_LOVE_ATTR_NAME = 'Increase love';
+const PRICE_ATTR_NAME = 'Price';
 
 export const CreateAsset: FC<CreateAssetProps> = ({onCanceled, onCreated}) => {
     const [defaultMetadataValues, setDefaultMetadataValues] = useState<Partial<MetadataFormValue>>();
     const { program } = useAnchor();
 
     useEffect(() => {
-        const defaultAttributes: MetadataAttribute[] = [
-            {
+        const defaultAttributes: MetadataAttribute[] = [INCREASE_FOOD_ATTR_NAME, INCREASE_LONELINESS_ATTR_NAME, INCREASE_LOVE_ATTR_NAME, PRICE_ATTR_NAME]
+            .map((trait_type) => ({
                 id: v4(),
-                trait_type: INCREASE_FOOD_ATTR_NAME,
+                trait_type,
                 value: '1',
                 isCanBeDeleted: false,
                 isNameCanBeChanged: false
-            },
-            {
-                id: v4(),
-                trait_type: INCREASE_LONELINESS_ATTR_NAME,
-                value: '1',
-                isCanBeDeleted: false,
-                isNameCanBeChanged: false
-            },
-            {
-                id: v4(),
-                trait_type: INCREASE_LOVE_ATTR_NAME,
-                value: '1',
-                isCanBeDeleted: false,
-                isNameCanBeChanged: false
-            }
-        ]
+            }));
 
         setDefaultMetadataValues({
             attributes: defaultAttributes
@@ -56,8 +43,9 @@ export const CreateAsset: FC<CreateAssetProps> = ({onCanceled, onCreated}) => {
         const increaseFood = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_FOOD_ATTR_NAME)!.value;
         const increaseLoneliness = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LONELINESS_ATTR_NAME)!.value;
         const increaseLove = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LOVE_ATTR_NAME)!.value;
+        const price = +metadataFormValue.attributes.find((attr) => attr.trait_type === PRICE_ATTR_NAME)!.value;
 
-        if (isNaN(increaseFood) || isNaN(increaseLoneliness) || isNaN(increaseLove)) {
+        if (isNaN(increaseFood) || isNaN(increaseLoneliness) || isNaN(increaseLove) || isNaN(price)) {
             toast.error('Invalid attributes values. (Only numbers are allowed)');
             return false;
         }
@@ -69,6 +57,7 @@ export const CreateAsset: FC<CreateAssetProps> = ({onCanceled, onCreated}) => {
         const increaseFood = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_FOOD_ATTR_NAME)!.value;
         const increaseLoneliness = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LONELINESS_ATTR_NAME)!.value;
         const increaseLove = +metadataFormValue.attributes.find((attr) => attr.trait_type === INCREASE_LOVE_ATTR_NAME)!.value;
+        const price = new BN(+metadataFormValue.attributes.find((attr) => attr.trait_type === PRICE_ATTR_NAME)!.value);
 
 
         if (!program) {
@@ -80,7 +69,8 @@ export const CreateAsset: FC<CreateAssetProps> = ({onCanceled, onCreated}) => {
             assetMint: assetMintPda,
             increaseFood,
             increaseLoneliness,
-            increaseLove
+            increaseLove,
+            price
         }).accounts({
             assetState: getAssetStatePda(assetMintPda)[0],
             state: PROGRAM_STATE_PDA,
